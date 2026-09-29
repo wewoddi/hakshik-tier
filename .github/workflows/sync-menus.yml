@@ -1,0 +1,20 @@
+# 매일 아침 서울대 생협 식단에서 새 메뉴를 가져와 Supabase에 추가합니다.
+# GitHub 저장소 Settings > Secrets and variables > Actions 에
+#   SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY 두 개를 등록하면 작동합니다.
+name: 학식 메뉴 동기화
+on:
+  schedule:
+    - cron: "7 22 * * *" # 매일 한국시간 07:07
+  workflow_dispatch: # Actions 탭에서 수동 실행 가능
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node scripts/sync-menus.mjs
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
